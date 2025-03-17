@@ -1,6 +1,8 @@
 import request from "supertest";
 import { app } from "../server";
 import { Server } from "http";
+import { CreateMembershipResponse } from "../types/MembershipResponses";
+import { Period } from "../types/Period";
 
 let server: Server;
 
@@ -177,10 +179,10 @@ describe("POST /legacy/memberships vs POST /memberships", () => {
       .send(validMembership);
 
     expect(modernResponse.status).toBe(legacyResponse.status);
-    const normalizeResponse = (response: any) => ({
-      validFrom: response.validFrom,
-      validUntil: response.validUntil,
-      membershipPeriods: response.membershipPeriods.map((p: any) => ({
+    const normalizeResponse = (response: CreateMembershipResponse) => ({
+      validFrom: response.membership.validFrom,
+      validUntil: response.membership.validUntil,
+      membershipPeriods: response.membershipPeriods.map((p: Period) => ({
         start: p.start,
         end: p.end,
         state: p.state,
