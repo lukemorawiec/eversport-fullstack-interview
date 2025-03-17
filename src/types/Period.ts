@@ -4,5 +4,5 @@ interface Period {
   membership: number;
   start: string;
   end: string;
-  state: "issued" | "planned";
+  state: string;
 }

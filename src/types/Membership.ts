@@ -6,9 +6,9 @@ interface Membership {
   recurringPrice: number;
   validFrom: string;
   validUntil: string;
-  state: "active" | "pending" | "expired";
+  state: string;
   assignedBy: string;
-  paymentMethod: "credit card" | "cash" | null;
-  billingInterval: "weekly" | "monthly" | "yearly";
+  paymentMethod: string | null;
+  billingInterval: string;
   billingPeriods: number;
 }

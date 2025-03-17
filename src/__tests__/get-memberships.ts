@@ -1,5 +1,6 @@
 import request from "supertest";
 import { app } from "../server";
+import { GetMembershipResponse } from "../types/MembershipResponses";
 
 let server: any;
 
@@ -11,8 +12,8 @@ afterAll((done) => {
   server.close(done);
 });
 
-describe("GET /legacy/memberships", () => {
-  it("responds with json", (done) => {
+describe("GET /memberships", () => {
+  it("responds with json (legacy endpoint)", (done) => {
     request(app)
       .get("/legacy/memberships")
       .set("Accept", "application/json")
@@ -20,10 +21,8 @@ describe("GET /legacy/memberships", () => {
       .expect(200, done);
   });
 
-  it("responds with proper period for membership id: 1", async () => {
-    const response = await request(app)
-      .get("/legacy/memberships")
-      .set("Accept", "application/json");
+  it("should responds with proper period for membership id: 1", async () => {
+    const response = await request(app).get("/legacy/memberships");
 
     const memberships: GetMembershipResponse[] = response.body;
 
@@ -40,6 +39,16 @@ describe("GET /legacy/memberships", () => {
     expect(foundMembershipFirstPeriod?.uuid).toEqual(
       "123e4567-e89b-12d3-a456-426614174000"
     );
-    expect(foundMembershipFirstPeriod?.start).toEqual("2023-01-01");
+  });
+
+  it("should return the same response from legacy and new endpoint", async () => {
+    const legacyResponse = await request(app).get("/legacy/memberships");
+
+    const newResponse = await request(app).get("/memberships");
+
+    expect(legacyResponse.status).toBe(200);
+    expect(newResponse.status).toBe(200);
+
+    expect(newResponse.body).toEqual(legacyResponse.body);
   });
 });

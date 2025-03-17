@@ -1,9 +1,9 @@
-interface GetMembershipResponse {
+export interface GetMembershipResponse {
   membership: Membership;
   periods: Period[];
 }
 
-interface CreateMembershipResponse {
+export interface CreateMembershipResponse {
   membership: Membership;
   membershipPeriods: Period[];
 }
