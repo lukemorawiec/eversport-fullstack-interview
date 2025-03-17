@@ -179,6 +179,7 @@ describe("POST /legacy/memberships vs POST /memberships", () => {
       .send(validMembership);
 
     expect(modernResponse.status).toBe(legacyResponse.status);
+    
     const normalizeResponse = (response: CreateMembershipResponse) => ({
       validFrom: response.membership.validFrom,
       validUntil: response.membership.validUntil,
