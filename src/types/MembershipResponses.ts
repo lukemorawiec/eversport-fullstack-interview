@@ -1,3 +1,6 @@
+import { Membership } from "./Membership";
+import { Period } from "./Period";
+
 export interface GetMembershipResponse {
   membership: Membership;
   periods: Period[];

@@ -1,8 +1,9 @@
 import request from "supertest";
 import { app } from "../server";
 import { GetMembershipResponse } from "../types/MembershipResponses";
+import { Server } from "http";
 
-let server: any;
+let server: Server;
 
 beforeAll(() => {
   server = app.listen(4001);

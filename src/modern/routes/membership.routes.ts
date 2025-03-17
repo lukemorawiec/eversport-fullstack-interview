@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
 import { getAllMemberships } from "../services/get-memberships";
+import { createMembership } from "../services/create-membership";
 
 const router = express.Router();
 
@@ -9,7 +10,16 @@ router.get("/", (_, res: Response) => {
 });
 
 router.post("/", (req: Request, res: Response) => {
-  throw new Error("not implemented");
+  try {
+    const result = createMembership(req.body);
+    res.status(201).json(result);
+  } catch (error) {
+    res
+      .status(400)
+      .json({
+        message: error instanceof Error ? error.message : "Unknown error",
+      });
+  }
 });
 
 export default router;

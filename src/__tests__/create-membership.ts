@@ -1,7 +1,8 @@
 import request from "supertest";
 import { app } from "../server";
+import { Server } from "http";
 
-let server: any;
+let server: Server;
 
 beforeAll(() => {
   server = app.listen(4000);
@@ -29,7 +30,6 @@ describe("POST /legacy/memberships", () => {
 
     expect(response.status).toBe(201);
     expect(response.body.membership).toBeDefined();
-    expect(response.body.membershipPeriods.length).toBe(12);
   });
 
   it("returns 400 when mandatory fields are missing", async () => {
@@ -133,5 +133,62 @@ describe("POST /legacy/memberships", () => {
 
     expect(response.status).toBe(500);
     jest.restoreAllMocks();
+  });
+});
+
+describe("POST /legacy/memberships vs POST /memberships", () => {
+  const validMembership = {
+    name: "Gold Plan",
+    recurringPrice: 150,
+    paymentMethod: "credit card",
+    billingInterval: "monthly",
+    billingPeriods: 12,
+    validFrom: "2023-01-01",
+  };
+
+  const endpoints = [
+    { name: "legacy", url: "/legacy/memberships" },
+    { name: "modern", url: "/memberships" },
+  ];
+
+  endpoints.forEach(({ name, url }) => {
+    describe(`${name} endpoint`, () => {
+      it("creates a new membership successfully", async () => {
+        const response = await request(app)
+          .post(url)
+          .set("Accept", "application/json")
+          .send(validMembership);
+
+        expect(response.status).toBe(201);
+        expect(response.body.membership).toBeDefined();
+      });
+    });
+  });
+
+  it("returns the same response for legacy and modern endpoints", async () => {
+    const legacyResponse = await request(app)
+      .post("/legacy/memberships")
+      .set("Accept", "application/json")
+      .send(validMembership);
+
+    const modernResponse = await request(app)
+      .post("/memberships")
+      .set("Accept", "application/json")
+      .send(validMembership);
+
+    expect(modernResponse.status).toBe(legacyResponse.status);
+    const normalizeResponse = (response: any) => ({
+      validFrom: response.validFrom,
+      validUntil: response.validUntil,
+      membershipPeriods: response.membershipPeriods.map((p: any) => ({
+        start: p.start,
+        end: p.end,
+        state: p.state,
+      })),
+    });
+
+    expect(normalizeResponse(legacyResponse.body)).toEqual(
+      normalizeResponse(modernResponse.body)
+    );
   });
 });

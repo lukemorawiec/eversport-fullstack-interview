@@ -72,7 +72,7 @@ router.post("/", (req, res) => {
     state,
     validFrom: validFrom,
     validUntil: validUntil,
-    user: userId,
+    userId,
     paymentMethod: req.body.paymentMethod,
     recurringPrice: req.body.recurringPrice,
     billingPeriods: req.body.billingPeriods,
@@ -95,7 +95,8 @@ router.post("/", (req, res) => {
     const period = {
       id: i + 1,
       uuid: uuidv4(),
-      membershipId: newMembership.id,
+      membership: newMembership.id,
+      // here was a bug: "membershipId" field does not exist for Periods model, there is "membership" as membership id
       start: validFrom,
       end: validUntil,
       state: "planned",

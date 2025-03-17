@@ -1,4 +1,4 @@
-interface Membership {
+export interface Membership {
   id: number;
   uuid: string;
   name: string;

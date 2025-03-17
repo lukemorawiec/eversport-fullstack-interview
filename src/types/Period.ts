@@ -1,4 +1,4 @@
-interface Period {
+export interface Period {
   id: number;
   uuid: string;
   membership: number;
